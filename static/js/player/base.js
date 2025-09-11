@@ -39,7 +39,7 @@ class player extends GAME_OBJ {
     // this.ctx.fillRect(this.x, this.y, this.width, this.height);
     let status = this.status;
 
-    if (this.status === 1 && this.direction * this.vx < 0) this.status = 2;//特判后退为2
+    if (this.status === 1 && this.direction * this.vx < 0) status = 2;//特判后退为2
 
     let obj = this.animations.get(status);//map字典查状态，obj当前状态获得的x.gif
     if (obj && obj.loading) {
@@ -47,7 +47,17 @@ class player extends GAME_OBJ {
       let img = obj.gif.frames[k].image;
       this.ctx.drawImage(img, this.x, this.y + obj.offset_y, img.width * obj.scale, img.height * obj.scale);
     }
+
+    if (status === 4) {
+      if (parseInt(this.frame_current_cnt / obj.frame_rate) >= obj.frame_cnt) {//播放完一周期动画
+        console.log("Attack animation finished, resetting status to 0"); // 调试信息
+        this.status = 0;
+        this.frame_current_cnt = 0;
+      }
+    }
     this.frame_current_cnt++;//帧数编号加一
+
+
   }
 
   update_move() {
@@ -69,23 +79,29 @@ class player extends GAME_OBJ {
   }
 
   update_controller() {//操作函数
-    let w, a, d, space;
+    let w, a, d, g;
     if (this.p_Id === 1) {
       w = this.pressed_keys.has("w");//跳跃
       a = this.pressed_keys.has("a");
       d = this.pressed_keys.has("d");
-      space = this.pressed_keys.has(" ");
+      g = this.pressed_keys.has("g");//攻击
     }
 
     else {
       w = this.pressed_keys.has("ArrowUp");
       a = this.pressed_keys.has("ArrowLeft");
       d = this.pressed_keys.has("ArrowRight");
-      space = this.pressed_keys.has("Enter");
+      g = this.pressed_keys.has("6") || this.pressed_keys.has("Numpad6");
     }
 
-    if (this.status === 0 || this.status === 1 || this.status === 2 ) {
-      if (w) {
+    if (this.status === 0 || this.status === 1 || this.status === 2) {
+      if (g) {
+        console.log("Attack triggered, status set to 4"); // 调试信息
+        this.status = 4;
+        this.vx = 0;
+        this.frame_current_cnt = 0;//从第0帧开始渲染
+      }
+      else if (w) {//这里一定要else if 因为渲染时一次性判别的，if跳到else，这g情况的status=4就被=0覆盖了
         if (d) {
           this.vx = this.speedx;
         }
