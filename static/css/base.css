@@ -1,0 +1,8 @@
+div {
+  width: 1600px;
+  height: 800px;
+  background-image: url('/static/img/background/2k2_05.gif');
+  /*左右上下*/
+  background-size: 100% 100%;
+  background-position: top;
+}

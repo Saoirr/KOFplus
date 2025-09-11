@@ -1,0 +1,138 @@
+import { GAME_OBJ } from "../game_object/base.js";
+
+class player extends GAME_OBJ {
+  constructor(root, info) {
+    super();
+    this.root = root;//root本身即KOF类的基类，root为了索引map类或者其他类
+    this.p_Id = info.p_Id;
+    this.x = info.x;
+    this.y = info.y;
+    this.width = info.width;
+    this.height = info.height;
+    this.vx = 0;
+    this.vy = 0;
+    this.color = info.color;
+
+    this.speedx = 500;//水平速度
+    this.speedy = 1500;//跳起初始速度
+    this.gravity = 50;
+    this.direction = 1;//正方向是1（一开始都朝向右边），  反方向则是-1;
+    this.ctx = this.root.game_map.ctx;
+    this.status = 3;//状态机，0：站立不动，1：向前（移动），2：后退（2也是1的一种，只是方向不同），3：跳起，4：攻击，5：被打，6：死亡
+    this.pressed_keys = this.root.game_map.Controller.pressed_keys;
+    this.frame_current_cnt = 0;//帧编号
+    this.animations = new Map();
+  }
+
+  start() {
+
+  }
+  update() {
+    this.update_controller();
+    this.update_move();
+    this.render();
+  }
+
+  render() {
+    //矩形渲染
+    // this.ctx.fillStyle = this.color; 
+    // this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    let status = this.status;
+
+    if (this.status === 1 && this.direction * this.vx < 0) this.status = 2;//特判后退为2
+
+    let obj = this.animations.get(status);//map字典查状态，obj当前状态获得的x.gif
+    if (obj && obj.loading) {
+      let k = parseInt(this.frame_current_cnt / obj.frame_rate) % obj.frame_cnt;
+      let img = obj.gif.frames[k].image;
+      this.ctx.drawImage(img, this.x, this.y + obj.offset_y, img.width * obj.scale, img.height * obj.scale);
+    }
+    this.frame_current_cnt++;//帧数编号加一
+  }
+
+  update_move() {
+    if (this.status === 3) this.vy += this.gravity;
+    this.x += this.vx * this.timedelta / 1000;
+    this.y += this.vy * this.timedelta / 1000;
+    if (this.y > 500) {
+      this.y = 500;
+      this.vy = 0;
+      this.status = 0;
+    }
+
+    if (this.x < 0) {
+      this.x = 0;
+    }
+    else if ((this.x + this.width) > this.root.game_map.$canvas.width()) {
+      this.x = this.root.game_map.$canvas.width() - this.width;
+    }
+  }
+
+  update_controller() {//操作函数
+    let w, a, d, space;
+    if (this.p_Id === 1) {
+      w = this.pressed_keys.has("w");//跳跃
+      a = this.pressed_keys.has("a");
+      d = this.pressed_keys.has("d");
+      space = this.pressed_keys.has(" ");
+    }
+
+    else {
+      w = this.pressed_keys.has("ArrowUp");
+      a = this.pressed_keys.has("ArrowLeft");
+      d = this.pressed_keys.has("ArrowRight");
+      space = this.pressed_keys.has("Enter");
+    }
+
+    if (this.status === 0 || this.status === 1 || this.status === 2 ) {
+      if (w) {
+        if (d) {
+          this.vx = this.speedx;
+        }
+        else if (a) {
+          this.vx = -this.speedx;
+        }
+        else {
+          this.vx = 0;
+        }
+        this.vy = -this.speedy;
+        this.status = 3;
+      }
+      else if (d) {
+        this.vx = this.speedx;
+        this.status = 1;
+      }
+      else if (a) {
+        this.vx = -this.speedx;
+        this.status = 1;
+      }
+      else {
+        this.vx = 0;
+        this.status = 0;
+      }
+    }
+
+    if (this.status === 3) {
+      if (d) {
+        this.vx = this.speedx;
+      }
+      else if (a) {
+        this.vx = -this.speedx;
+      }
+      // else {
+      //   this.vx = 0;
+      // }//这里注释掉是因为能在跳跃时保持之前按的水平速度惯性
+
+    }
+
+  }
+
+
+
+}
+
+
+
+export {
+  player,
+}

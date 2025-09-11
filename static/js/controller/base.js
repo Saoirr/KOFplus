@@ -1,0 +1,22 @@
+class Controller {
+  constructor($canvas) {
+    this.pressed_keys = new Set();
+    this.$canvas = $canvas;
+    this.start();
+  }
+
+  start() {
+    let outer = this;
+    this.$canvas.keydown((e) => {
+      outer.pressed_keys.add(e.key);
+    });
+    
+    this.$canvas.keyup((e) => {
+      outer.pressed_keys.delete(e.key);
+    });
+  }
+}
+
+export {
+  Controller,
+}
