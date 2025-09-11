@@ -49,10 +49,10 @@ class player extends GAME_OBJ {
     }
 
     if (status === 4) {
-      if (parseInt(this.frame_current_cnt / obj.frame_rate) >= obj.frame_cnt) {//播放完一周期动画
+      if (this.frame_current_cnt === obj.frame_rate * (obj.frame_cnt - 1)) {//播放完一周期动画，刚好卡在最后一帧
         console.log("Attack animation finished, resetting status to 0"); // 调试信息
         this.status = 0;
-        this.frame_current_cnt = 0;
+        //this.frame_current_cnt = 0;
       }
     }
     this.frame_current_cnt++;//帧数编号加一
