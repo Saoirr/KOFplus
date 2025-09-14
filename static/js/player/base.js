@@ -125,7 +125,7 @@ class player extends GAME_OBJ {
             y2: me.y + 30 + 30,
           };
         }
-        let r2//身体矩形
+        let r2;//身体矩形
 
 
       }
@@ -152,7 +152,7 @@ class player extends GAME_OBJ {
             y2: me.this.y + 30 + 30,
           };
         }
-        let r2//身体矩形
+        let r2;//身体矩形
 
 
       }
