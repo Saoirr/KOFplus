@@ -15,7 +15,7 @@ class kyo extends player {
       this.animations.set(i, {
         gif: gif,
         frame_cnt: 0,//总图片
-        frame_rate: 7,//每等5帧过度一帧
+        frame_rate: 7,//每等7帧过度一帧
         offset_y: offsets[i],//偏移量
         loading: false,//是否加载完成
         scale: 2.5,//放大倍数
@@ -24,6 +24,7 @@ class kyo extends player {
         let obj = outer.animations.get(i);
         obj.frame_cnt = gif.frames.length;
         obj.loading = true;
+        if (i === 3) obj.frame_rate = 9;
       }
     }
   }

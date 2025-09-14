@@ -30,6 +30,7 @@ class player extends GAME_OBJ {
   update() {
     this.update_controller();
     this.update_move();
+    this.update_direction();
     this.render();
   }
 
@@ -43,9 +44,22 @@ class player extends GAME_OBJ {
 
     let obj = this.animations.get(status);//map字典查状态，obj当前状态获得的x.gif
     if (obj && obj.loading) {
-      let k = parseInt(this.frame_current_cnt / obj.frame_rate) % obj.frame_cnt;
-      let img = obj.gif.frames[k].image;
-      this.ctx.drawImage(img, this.x, this.y + obj.offset_y, img.width * obj.scale, img.height * obj.scale);
+      if (this.direction > 0) {
+        let k = parseInt(this.frame_current_cnt / obj.frame_rate) % obj.frame_cnt;
+        let img = obj.gif.frames[k].image;
+        this.ctx.drawImage(img, this.x, this.y + obj.offset_y, img.width * obj.scale, img.height * obj.scale);
+      }
+      else {
+        this.ctx.save();
+        this.ctx.scale(-1, 1);
+        this.ctx.translate(-this.root.game_map.$canvas.width(), 0);
+
+        let k = parseInt(this.frame_current_cnt / obj.frame_rate) % obj.frame_cnt;
+        let img = obj.gif.frames[k].image;
+        this.ctx.drawImage(img, this.root.game_map.$canvas.width() - this.x - this.width, this.y + obj.offset_y, img.width * obj.scale, img.height * obj.scale);
+
+        this.ctx.restore();
+      }
     }
 
     if (status === 4) {
@@ -59,6 +73,16 @@ class player extends GAME_OBJ {
 
 
   }
+
+  update_direction() {
+    let players = this.root.players;
+    if (players[0] && players[1]) {
+      let me = this, you = players[3 - me.p_Id - 1];
+      if (me.x < you.x) me.direction = 1;
+      else me.direction = -1;
+    }
+  }
+
 
   update_move() {
     if (this.status === 3) this.vy += this.gravity;
@@ -113,6 +137,7 @@ class player extends GAME_OBJ {
         }
         this.vy = -this.speedy;
         this.status = 3;
+        this.frame_current_cnt = 0;//从第0帧开始渲染
       }
       else if (d) {
         this.vx = this.speedx;

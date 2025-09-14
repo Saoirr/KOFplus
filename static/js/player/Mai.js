@@ -15,7 +15,7 @@ class Mai extends player {
       this.animations.set(i, {//定义好animations
         gif: gif,
         frame_cnt: 0,//总图片
-        frame_rate: 7,//每等5帧过度一帧
+        frame_rate: 7,//每等7帧过度一帧
         offset_y: offsets[i],//偏移量
         loading: false,//是否加载完成
         scale: 2.5,//放大倍数
