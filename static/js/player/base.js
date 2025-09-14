@@ -31,6 +31,7 @@ class player extends GAME_OBJ {
     this.update_controller();
     this.update_move();
     this.update_direction();
+    this.update_attack();
     this.render();
   }
 
@@ -38,6 +39,34 @@ class player extends GAME_OBJ {
     //矩形渲染
     // this.ctx.fillStyle = this.color; 
     // this.ctx.fillRect(this.x, this.y, this.width, this.height);
+
+    this.ctx.fillStyle = 'red';
+    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    //以下渲染拳头方块
+    if (this.p_Id === 1) {//kyo
+      if (this.direction > 0) {
+        this.ctx.fillStyle = 'blue';
+        this.ctx.fillRect(this.x + 240, this.y + 30, 30, 30);
+      }
+      else {
+        this.ctx.fillStyle = 'blue';
+        this.ctx.fillRect(this.x - 240 + this.width - 30, this.y + 30, 30, 30);
+      }
+    }
+
+
+    else {//Mai
+      if (this.direction > 0) {//正方向
+        this.ctx.fillStyle = 'blue';
+        this.ctx.fillRect(this.x + 240 + this.width - 30, this.y + 30, 30, 30);
+      }
+      else {
+        this.ctx.fillStyle = 'blue';
+        this.ctx.fillRect(this.x - 240, this.y + 30, 30, 30);
+      }
+    }
+
+
     let status = this.status;
 
     if (this.status === 1 && this.direction * this.vx < 0) status = 2;//特判后退为2
@@ -71,6 +100,63 @@ class player extends GAME_OBJ {
     }
     this.frame_current_cnt++;//帧数编号加一
 
+
+  }
+
+  update_attack() {
+    if (this.p_Id === 2) {//Mai
+      if (this.status === 4 && this.frame_current_cnt === 70) {
+        this.status = 0;
+        let me = this, you = this.root.players[3 - me.p_Id - 1];
+        let r1;//拳头矩形
+        if (me.direction > 0) {//this.x + 240 + this.width - 30, this.y + 30, 30, 30
+          r1 = {
+            x1: me.x + 240 + this.width - 30,
+            y1: me.y + 30,
+            x2: me.x + 240 + this.width - 30 + 30,
+            y2: me.y + 30 + 30,
+          };
+        }
+        else {
+          r1 = {//this.x - 240, this.y + 30, 30, 30
+            x1: me.x + 240,
+            y1: me.y + 30,
+            x2: me.x + 240 + 30,
+            y2: me.y + 30 + 30,
+          };
+        }
+        let r2//身体矩形
+
+
+      }
+    }
+
+    else {//kyo
+      if (this.status === 4 && this.frame_current_cnt === 35) {
+        this.status = 0;
+        let me = this, you = this.root.players[3 - me.p_Id - 1];
+        let r1;
+        if (me.direction > 0) {//this.x + 240, this.y + 30, 30, 30
+          r1 = {
+            x1: me.x + 240,
+            y1: me.y + 30,
+            x2: me.x + 240 + 30,
+            y2: me.y + 30 + 30,
+          };
+        }
+        else {
+          r1 = {//this.x - 240 + this.width - 30, this.y + 30, 30, 30
+            x1: me.x - 240 + this.width - 30,
+            y1: me.this.y + 30,
+            x2: me.x - 240 + this.width - 30 + 30,
+            y2: me.this.y + 30 + 30,
+          };
+        }
+        let r2//身体矩形
+
+
+      }
+    }
 
   }
 

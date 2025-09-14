@@ -15,8 +15,8 @@ class KOF {
           p_Id: 1,
           x: 400,
           y: 0,
-          width: 120,
-          height: 200,
+          width: 140,
+          height: 250,
           color: 'black',
         }),
 
@@ -24,8 +24,8 @@ class KOF {
           p_Id: 2,
           x: 1200,
           y: 0,
-          width: 120,
-          height: 200,
+          width: 140,
+          height: 250,
           color: 'green',
         }),
       ];
