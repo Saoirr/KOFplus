@@ -22,6 +22,7 @@ class player extends GAME_OBJ {
     this.pressed_keys = this.root.game_map.Controller.pressed_keys;
     this.frame_current_cnt = 0;//帧编号
     this.animations = new Map();
+    this.hp = 100;
   }
 
   start() {
@@ -91,17 +92,69 @@ class player extends GAME_OBJ {
       }
     }
 
-    if (status === 4) {
-      if (this.frame_current_cnt === obj.frame_rate * (obj.frame_cnt - 1)) {//播放完一周期动画，刚好卡在最后一帧
-        console.log("Attack animation finished, resetting status to 0"); // 调试信息
-        this.status = 0;
-        //this.frame_current_cnt = 0;
+    if (status === 4 || status === 5 || status === 6) {
+      //kyo走这条
+      if (this.p_Id === 1) {
+        if (this.frame_current_cnt === obj.frame_rate * (obj.frame_cnt - 1)) {
+          console.log("Attack animation finished, resetting status to 0");
+          if (status === 6) this.frame_current_cnt--;
+          else this.status = 0;
+        }
       }
+      else {//Mai
+        if (status === 6) {//死亡特判
+          if (this.frame_current_cnt === 85) {//正常obj.frame_rate * 8，85是测出来的
+            console.log("Attack animation finished, resetting status to 0");
+            this.frame_current_cnt--;
+          }
+        }
+
+
+        else if (this.frame_current_cnt === obj.frame_rate * (obj.frame_cnt - 1)) {//正常
+          console.log("Attack animation finished, resetting status to 0");
+          if (status !== 6) this.status = 0;
+        }
+      }
+
     }
-    this.frame_current_cnt++;//帧数编号加一
 
 
+    this.frame_current_cnt++;
   }
+
+  is_attack() {//被攻击（含检测）函数
+    if (this.status === 6) return;
+
+
+    this.status = 5;
+
+    //击退
+    if (this.p_Id === 1)//kyo//这里采取了偷懒的方法，因为只有两个角色，若后续扩展，该函数带入攻击者的类实例就行
+    {
+      if (this.direction > 0) this.x -= 60;
+      else this.x += 60;
+      this.hp -= 50;
+    }
+    else {
+      if (this.direction > 0) this.x -= 30;
+      else this.x += 30;
+      this.hp -= 50;
+    }
+
+    if (this.hp <= 0) this.status = 6;
+    this.frame_current_cnt = 0;
+  }
+
+  is_collision(r1, r2) {
+    if (Math.max(r1.x1, r2.x1) > Math.min(r1.x2, r2.x2)) {
+      return false;
+    }
+    else if (Math.max(r1.y1, r2.y1) > Math.min(r1.y2, r2.y2)) {
+      return false;
+    }
+    else return true;
+  }
+
 
   update_attack() {
     if (this.p_Id === 2) {//Mai
@@ -109,24 +162,31 @@ class player extends GAME_OBJ {
         this.status = 0;
         let me = this, you = this.root.players[3 - me.p_Id - 1];
         let r1;//拳头矩形
-        if (me.direction > 0) {//this.x + 240 + this.width - 30, this.y + 30, 30, 30
+        if (me.direction > 0) {//this.x + 240 + this.width - 30, this.y + 30, 30, 30)
           r1 = {
-            x1: me.x + 240 + this.width - 30,
+            x1: me.x + 240 + me.width - 30,
             y1: me.y + 30,
-            x2: me.x + 240 + this.width - 30 + 30,
+            x2: me.x + 240 + me.width - 30 + 30,
             y2: me.y + 30 + 30,
           };
         }
         else {
           r1 = {//this.x - 240, this.y + 30, 30, 30
-            x1: me.x + 240,
+            x1: me.x - 240,
             y1: me.y + 30,
-            x2: me.x + 240 + 30,
+            x2: me.x - 240 + 30,
             y2: me.y + 30 + 30,
           };
         }
-        let r2;//身体矩形
-
+        let r2 = {
+          x1: you.x,
+          y1: you.y,
+          x2: you.x + you.width,
+          y2: you.y + you.height,
+        };//对方的身体矩形
+        if (this.is_collision(r1, r2)) {
+          you.is_attack();
+        }
 
       }
     }
@@ -147,20 +207,28 @@ class player extends GAME_OBJ {
         else {
           r1 = {//this.x - 240 + this.width - 30, this.y + 30, 30, 30
             x1: me.x - 240 + this.width - 30,
-            y1: me.this.y + 30,
+            y1: me.y + 30,
             x2: me.x - 240 + this.width - 30 + 30,
-            y2: me.this.y + 30 + 30,
+            y2: me.y + 30 + 30,
           };
         }
-        let r2;//身体矩形
-
-
+        let r2 = {
+          x1: you.x,
+          y1: you.y,
+          x2: you.x + you.width,
+          y2: you.y + you.height,
+        };//对方的身体矩形
+        if (this.is_collision(r1, r2)) {
+          you.is_attack();
+        }
       }
     }
 
   }
 
   update_direction() {
+    if (this.status === 6) return;
+
     let players = this.root.players;
     if (players[0] && players[1]) {
       let me = this, you = players[3 - me.p_Id - 1];
@@ -171,13 +239,14 @@ class player extends GAME_OBJ {
 
 
   update_move() {
-    if (this.status === 3) this.vy += this.gravity;
+    this.vy += this.gravity;
+
     this.x += this.vx * this.timedelta / 1000;
     this.y += this.vy * this.timedelta / 1000;
     if (this.y > 500) {
       this.y = 500;
       this.vy = 0;
-      this.status = 0;
+      if (this.status === 3) this.status = 0;
     }
 
     if (this.x < 0) {
