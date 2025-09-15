@@ -109,7 +109,6 @@ class player extends GAME_OBJ {
           }
         }
 
-
         else if (this.frame_current_cnt === obj.frame_rate * (obj.frame_cnt - 1)) {//正常
           console.log("Attack animation finished, resetting status to 0");
           if (status !== 6) this.status = 0;

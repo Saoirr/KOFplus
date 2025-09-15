@@ -9,6 +9,13 @@ class GAME_MAP extends GAME_OBJ {
     this.root.$id.append(this.$canvas);
     this.$canvas.focus();
     this.Controller = new Controller(this.$canvas);
+    this.root.$id.append($(`<div class="head">
+    <div class="player1-hp"><div><div></div></div></div>
+    <div class="timer">60</div>
+    <div class="player2-hp"><div><div></div></div></div>
+  </div>`));
+
+
   }
   start() {
 

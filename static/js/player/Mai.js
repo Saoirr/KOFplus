@@ -8,7 +8,7 @@ class Mai extends player {
 
   init_animations() {
     let outer = this;
-    let offsets = [0, -22, -22, -200, -50, 0, -77];
+    let offsets = [0, -22, -22, -200, -50, 0, -90];
     for (let i = 0; i < 7; i++) {
       let gif = GIF();
       gif.load(`/static/img/player/Mai/${i}.gif`);
