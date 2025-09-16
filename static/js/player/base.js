@@ -44,31 +44,31 @@ class player extends GAME_OBJ {
     // this.ctx.fillStyle = this.color; 
     // this.ctx.fillRect(this.x, this.y, this.width, this.height);
 
-    this.ctx.fillStyle = 'red';
-    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    //this.ctx.fillStyle = 'red';
+    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
     //以下渲染拳头方块
-    if (this.p_Id === 1) {//kyo
-      if (this.direction > 0) {
-        this.ctx.fillStyle = 'blue';
-        this.ctx.fillRect(this.x + 240, this.y + 30, 30, 30);
-      }
-      else {
-        this.ctx.fillStyle = 'blue';
-        this.ctx.fillRect(this.x - 240 + this.width - 30, this.y + 30, 30, 30);
-      }
-    }
+    // if (this.p_Id === 1) {//kyo
+    //   if (this.direction > 0) {
+    //     this.ctx.fillStyle = 'blue';
+    //     this.ctx.fillRect(this.x + 240, this.y + 30, 30, 30);
+    //   }
+    //   else {
+    //     this.ctx.fillStyle = 'blue';
+    //     this.ctx.fillRect(this.x - 240 + this.width - 30, this.y + 30, 30, 30);
+    //   }
+    // }
 
 
-    else {//Mai
-      if (this.direction > 0) {//正方向
-        this.ctx.fillStyle = 'blue';
-        this.ctx.fillRect(this.x + 240 + this.width - 30, this.y + 30, 30, 30);
-      }
-      else {
-        this.ctx.fillStyle = 'blue';
-        this.ctx.fillRect(this.x - 240, this.y + 30, 30, 30);
-      }
-    }
+    // else {//Mai
+    //   if (this.direction > 0) {//正方向
+    //     this.ctx.fillStyle = 'blue';
+    //     this.ctx.fillRect(this.x + 240 + this.width - 30, this.y + 30, 30, 30);
+    //   }
+    //   else {
+    //     this.ctx.fillStyle = 'blue';
+    //     this.ctx.fillRect(this.x - 240, this.y + 30, 30, 30);
+    //   }
+    // }
 
 
     let status = this.status;
