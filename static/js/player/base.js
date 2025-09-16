@@ -19,6 +19,7 @@ class player extends GAME_OBJ {
     this.direction = 1;//正方向是1（一开始都朝向右边），  反方向则是-1;
     this.ctx = this.root.game_map.ctx;
     this.status = 3;//状态机，0：站立不动，1：向前（移动），2：后退（2也是1的一种，只是方向不同），3：跳起，4：攻击，5：被打，6：死亡
+    //状态机补充：7：防守，8：冲刺
     this.pressed_keys = this.root.game_map.Controller.pressed_keys;
     this.frame_current_cnt = 0;//帧编号
     this.animations = new Map();
@@ -36,6 +37,7 @@ class player extends GAME_OBJ {
     this.update_move();
     this.update_direction();
     this.update_attack();
+    this.update_defend();
     this.render();
   }
 
@@ -95,7 +97,8 @@ class player extends GAME_OBJ {
       }
     }
 
-    if (status === 4 || status === 5 || status === 6) {
+
+    if (status === 4 || status === 5 || status === 6 || status === 7) {
       //kyo走这条
       if (this.p_Id === 1) {
         if (this.frame_current_cnt === obj.frame_rate * (obj.frame_cnt - 1)) {
@@ -103,12 +106,18 @@ class player extends GAME_OBJ {
           if (status === 6) this.frame_current_cnt--;
           else this.status = 0;
         }
+        else if (this.frame_current_cnt >= 3 && status === 7) this.frame_current_cnt = 35;
       }
       else {//Mai
         if (status === 6) {//死亡特判
           if (this.frame_current_cnt === 85) {//正常obj.frame_rate * 8，85是测出来的
-
             this.frame_current_cnt--;
+          }
+        }
+
+        else if (status === 7) {//防守帧
+          if (this.frame_current_cnt >= 3) {
+            this.frame_current_cnt = 10;
           }
         }
 
@@ -123,24 +132,28 @@ class player extends GAME_OBJ {
 
     this.frame_current_cnt++;
   }
+  update_defend() {
+
+
+  }
 
   is_attack() {//被攻击（含检测）函数
     if (this.status === 6) return;
 
 
-    this.status = 5;
+    if (this.status !== 7) this.status = 5;
 
     //击退
     if (this.p_Id === 1)//kyo//这里采取了偷懒的方法，因为只有两个角色，若后续扩展，该函数带入攻击者的类实例就行
     {
       if (this.direction > 0) this.x -= 60;
       else this.x += 60;
-      this.hp -= 27;
+      if (this.status !== 7) this.hp -= 27;
     }
     else {
       if (this.direction > 0) this.x -= 30;
       else this.x += 30;
-      this.hp -= 17;
+      if (this.status !== 7) this.hp -= 17;
     }
     this.$hp_inner.animate({ width: this.$hp.parent().width() * this.hp / 100 }, 100);
     this.$hp.animate({ width: this.$hp.parent().width() * this.hp / 100 }, 300);//设置血量链接)加渐变
@@ -265,12 +278,13 @@ class player extends GAME_OBJ {
   }
 
   update_controller() {//操作函数
-    let w, a, d, g;
+    let w, a, d, g, s;
     if (this.p_Id === 1) {
       w = this.pressed_keys.has("w");//跳跃
       a = this.pressed_keys.has("a");
       d = this.pressed_keys.has("d");
       g = this.pressed_keys.has("g");//攻击
+      s = this.pressed_keys.has("s");
     }
 
     else {
@@ -278,14 +292,21 @@ class player extends GAME_OBJ {
       a = this.pressed_keys.has("ArrowLeft");
       d = this.pressed_keys.has("ArrowRight");
       g = this.pressed_keys.has("6") || this.pressed_keys.has("Numpad6");
+      s = this.pressed_keys.has("ArrowDown");
     }
 
     if (this.status === 0 || this.status === 1 || this.status === 2) {
-      if (g) {
+      if (g) {//攻击绑定
         console.log("Attack triggered, status set to 4"); // 调试信息
         this.status = 4;
         this.vx = 0;
         this.frame_current_cnt = 0;//从第0帧开始渲染
+      }
+      else if (s) {
+        console.log("Attack triggered, status set to 7");
+        this.status = 7;
+        this.vx = 0;
+        this.frame_current_cnt = 0;
       }
       else if (w) {//这里一定要else if 因为渲染时一次性判别的，if跳到else，这g情况的status=4就被=0覆盖了
         if (d) {
@@ -325,8 +346,23 @@ class player extends GAME_OBJ {
       // else {
       //   this.vx = 0;
       // }//这里注释掉是因为能在跳跃时保持之前按的水平速度惯性
-
     }
+    if (this.status === 7) {
+      if (!s) {//一定要加这个，因为攻击是全动画播放，防守要能瞬间收回，不然会卡在原地防守，因为防守渲染时用来卡在某帧的方式
+        this.status = 0;
+        this.vx = 0;
+      }
+      else if (d) {
+        this.vx = this.speedx * 0.05;
+      }
+      else if (a) {
+        this.vx = -this.speedx * 0.05;
+      }
+      else {
+        this.vx = 0;
+      }
+    }
+
 
   }
 
