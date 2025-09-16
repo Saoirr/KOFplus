@@ -23,6 +23,9 @@ class player extends GAME_OBJ {
     this.frame_current_cnt = 0;//帧编号
     this.animations = new Map();
     this.hp = 100;
+    this.$hp = this.root.$id.find(`.player${this.p_Id}-hp>div`);
+    this.$hp_inner = this.root.$id.find(`.player${this.p_Id}-hp>div>div`);
+
   }
 
   start() {
@@ -132,15 +135,20 @@ class player extends GAME_OBJ {
     {
       if (this.direction > 0) this.x -= 60;
       else this.x += 60;
-      this.hp -= 50;
+      this.hp -= 27;
     }
     else {
       if (this.direction > 0) this.x -= 30;
       else this.x += 30;
-      this.hp -= 50;
+      this.hp -= 17;
     }
+    this.$hp_inner.animate({ width: this.$hp.parent().width() * this.hp / 100 }, 100);
+    this.$hp.animate({ width: this.$hp.parent().width() * this.hp / 100 }, 300);//设置血量链接)加渐变
 
-    if (this.hp <= 0) this.status = 6;
+    if (this.hp <= 0) {
+      this.status = 6;
+      this.vx = 0;
+    }
     this.frame_current_cnt = 0;
   }
 
