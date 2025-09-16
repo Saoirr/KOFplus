@@ -1,4 +1,4 @@
-import { GAME_OBJ } from '/static/js/game_object/base.js';
+import { GAME_OBJ } from '../game_object/base.js';
 import { Controller } from '../controller/base.js';
 class GAME_MAP extends GAME_OBJ {
   constructor(root) {

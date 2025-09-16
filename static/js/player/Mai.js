@@ -11,7 +11,7 @@ class Mai extends player {
     let offsets = [0, -22, -22, -200, -50, 0, -90];
     for (let i = 0; i < 7; i++) {
       let gif = GIF();
-      gif.load(`/static/img/player/Mai/${i}.gif`);
+      gif.load(`./static/img/player/Mai/${i}.gif`);
       this.animations.set(i, {//定义好animations
         gif: gif,
         frame_cnt: 0,//总图片

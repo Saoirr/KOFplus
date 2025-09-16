@@ -1,7 +1,7 @@
 
 
-import { player } from '/static/js/player/base.js';
-import { GAME_MAP } from '/static/js/game_map/base.js';
+import { player } from './player/base.js';
+import { GAME_MAP } from './game_map/base.js';
 import { kyo } from './player/kyo.js';
 import { Mai } from './player/Mai.js';
 class KOF {
