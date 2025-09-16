@@ -107,7 +107,7 @@ class player extends GAME_OBJ {
       else {//Mai
         if (status === 6) {//死亡特判
           if (this.frame_current_cnt === 85) {//正常obj.frame_rate * 8，85是测出来的
-            console.log("Attack animation finished, resetting status to 0");
+
             this.frame_current_cnt--;
           }
         }
